@@ -49,7 +49,9 @@ describe('vue-class-component with Babel', () => {
   })
 
   it('warn if class property is used without inheriting Vue class', () => {
+    //debugger;
     const spy = chai.spy.on(console, 'warn')
+
 
     @Component({
       foo: Number
@@ -65,7 +67,7 @@ describe('vue-class-component with Babel', () => {
 
     const message = '[vue-class-component] ' +
       'Component class must inherit Vue or its descendant class ' +
-      'when class property is used.'
+      'when class property is used.!'
 
     expect(spy).to.have.been.called.with(message)
   })

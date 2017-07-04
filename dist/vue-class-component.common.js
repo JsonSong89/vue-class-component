@@ -11,6 +11,13 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var Vue = _interopDefault(require('vue'));
 
+function Mixin(parent) {
+    var traits = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        traits[_i - 1] = arguments[_i];
+    }
+    return parent.extend({ mixins: traits });
+}
 function createDecorator(factory) {
     return function (_, key, index) {
         if (typeof index !== 'number') {
@@ -131,3 +138,4 @@ var Component$1 = Component;
 
 exports['default'] = Component$1;
 exports.createDecorator = createDecorator;
+exports.Mixin = Mixin;

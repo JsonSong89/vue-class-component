@@ -15,7 +15,8 @@
     "clean": "rimraf ./lib",
     "example": "npm run build && webpack --config example/webpack.config.js",
     "dev": "webpack --config example/webpack.config.js --watch",
-    "test": "npm run build && webpack --config test/webpack.config.js && mocha test/test.build.js"
+    "test": "npm run build && webpack --config test/webpack.config.js && mocha test/test.build.js",
+    "test:debugger": "mocha test/test.build.js --inspect-brk "
   },
   "repository": {
     "type": "git",
@@ -34,7 +35,7 @@
   },
   "homepage": "https://github.com/vuejs/vue-class-component#readme",
   "devDependencies": {
-    "@types/chai": "^3.4.35",
+    "@types/chai": "^4.0.1",
     "@types/mocha": "^2.2.40",
     "babel-core": "^6.24.0",
     "babel-loader": "^6.4.1",
