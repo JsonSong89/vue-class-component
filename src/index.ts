@@ -5,7 +5,7 @@ import {componentFactory, $internalHooks} from './component'
 export {createDecorator, Mixin} from './util'
 
 function Component<U extends Vue>(options: ComponentOptions<U>): <V extends VueClass | VClass<U>>(target: V) => V
-function Component<V extends VueClass>(target: V): V
+function Component<U extends Vue, V extends VueClass | VClass<U>>(target: V): V
 function Component<V extends VueClass, U extends Vue>(options: ComponentOptions<U> | V): any {
     if (typeof options === 'function') {
         return componentFactory(options)
