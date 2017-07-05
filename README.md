@@ -216,6 +216,41 @@ class MyComp extends Vue {
 }
 ```
 
+
+#### Mixin
+
+This function is actually equivalent to [mixin](https://vuejs.org/v2/guide/mixins.html#ad),but you can use it with strong type support. 
+
+You can use `Mixin` like that:
+```typescript
+    import Vue from "vue";
+    import Component, {Mixin} from "vue-class-component";
+    @Component
+    class Pen extends Vue {
+        havePen() {
+            alert('I have a pen')
+        }
+    }
+    @Component
+    class Apple extends Vue {
+        haveApple() {
+            alert('I have an apple')
+        }
+    }
+    @Component({template: `
+        <div>
+            <span @click="Uh"> click show</span>
+        </div>`
+    })
+    export default class ApplePen extends Mixin(Apple, Pen) {
+        Uh() {
+            this.havePen()
+            this.haveApple()
+        }
+    }
+```
+this design is copy from [av-ts](https://github.com/HerringtonDarkholme/av-ts), you can [read more](https://github.com/HerringtonDarkholme/av-ts#mixin) about it.
+
 ### Build the Example
 
 ``` bash

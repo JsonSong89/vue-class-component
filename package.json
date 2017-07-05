@@ -16,7 +16,7 @@
     "example": "npm run build && webpack --config example/webpack.config.js",
     "dev": "webpack --config example/webpack.config.js --watch",
     "test": "npm run build && webpack --config test/webpack.config.js && mocha test/test.build.js",
-    "test:debugger": "mocha test/test.build.js --inspect-brk "
+    "test:debugger": "mocha test/test.build.js  "
   },
   "repository": {
     "type": "git",

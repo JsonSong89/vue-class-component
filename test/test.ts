@@ -233,35 +233,38 @@ describe('vue-class-component', () => {
             // component options should be passed to the callback
             // and update for the options affect the component
             (options.props || (options.props = {}))[key] = true
-        })
-
-
+        });
 
         @Component
         class Class1 extends Vue {
-            @Prop foo1: string
-            str1 = "111"
+            @Prop foo1: string = "foo1"
+            str1 = "0"
         }
         @Component
         class Class2 extends Vue {
-            num2 = 222
+            num2 = 2
         }
 
         @Component
-        class MyComp extends Mixin(Class1,Class2) {
-            @Prop foo: string
+        class MyComp extends Mixin(Class1, Class2) {
+            get foo1Computer() {
+                return "c_" + this.foo1
+            }
 
-
+            get strAndNumSum() {
+                return parseInt(this.str1) + this.num2
+            }
         }
-        //
-        // const c = new MyComp({
-        //     propsData: {
-        //         foo: 'hello'
-        //     }
-        // })
-        // expect(c.foo).to.equal('hello')
-        // expect(c.bar).to.equal('world')
+        const c = new MyComp();
+        expect(c.foo1Computer).to.equal('c_foo1')
+        c.str1 = "3";
+        expect(c.strAndNumSum).to.equal(5)
         // expect((MyComp as any).options.computed.bar.cache).to.be.false
+
+
+
+
+
     })
 
 

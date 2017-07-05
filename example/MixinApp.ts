@@ -1,7 +1,8 @@
+/**
+ * This app is same as App.vue , just use Mixin redone it
+ * */
 import Vue from 'vue'
 import Component, {Mixin} from '../lib/index'
-// import Component, {Mixin} from '../src'
-
 @Component({
     props: {
         propMessage: String
