@@ -1,8 +1,8 @@
-import Vue, {ComponentOptions} from 'vue'
-import {VueClass, VClass} from './declarations'
-import {componentFactory, $internalHooks} from './component'
+import Vue, { ComponentOptions } from 'vue'
+import { VueClass, VClass } from './declarations'
+import { componentFactory, $internalHooks } from './component'
 
-export {createDecorator, Mixin} from './util'
+export { createDecorator, Mixin } from './util'
 
 function Component<U extends Vue>(options: ComponentOptions<U>): <V extends VueClass | VClass<U>>(target: V) => V
 function Component<U extends Vue, V extends VueClass | VClass<U>>(target: V): V

@@ -1,5 +1,5 @@
-import Component, {createDecorator, Mixin} from '../'
-import {expect} from 'chai'
+import Component, { createDecorator, Mixin } from '../'
+import { expect } from 'chai'
 import Vue from 'vue'
 
 describe('vue-class-component', () => {
@@ -119,7 +119,7 @@ describe('vue-class-component', () => {
 
     describe('name', () => {
         it('via name option', () => {
-            @Component({name: 'test'})
+            @Component({ name: 'test' })
             class MyComp extends Vue {
             }
 
@@ -159,7 +159,7 @@ describe('vue-class-component', () => {
             a: number
 
             data() {
-                return {a: 1}
+                return { a: 1 }
             }
         }
 
@@ -177,7 +177,7 @@ describe('vue-class-component', () => {
             a: number
 
             data(): any {
-                return {a: 1}
+                return { a: 1 }
             }
         }
 
@@ -186,7 +186,7 @@ describe('vue-class-component', () => {
             b: number
 
             data(): any {
-                return {b: 2}
+                return { b: 2 }
             }
         }
 
