@@ -4,9 +4,9 @@
   * @license MIT
   */
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vue')) :
-	typeof define === 'function' && define.amd ? define(['exports', 'vue'], factory) :
-	(factory((global.VueClassComponent = global.VueClassComponent || {}),global.Vue));
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vue')) :
+    typeof define === 'function' && define.amd ? define(['exports', 'vue'], factory) :
+    (factory((global.VueClassComponent = global.VueClassComponent || {}),global.Vue));
 }(this, (function (exports,Vue) { 'use strict';
 
 Vue = 'default' in Vue ? Vue['default'] : Vue;

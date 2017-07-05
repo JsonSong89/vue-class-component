@@ -1,4 +1,4 @@
-import Component, { createDecorator } from '../'
+import Component, { createDecorator , Mixin } from '../'
 import { expect } from 'chai'
 import Vue from 'vue'
 
