@@ -1,10 +1,12 @@
 <template>
   <div>
     <input v-model="msg">
-    <p>prop: {{propMessage}}</p>
-    <p>msg: {{msg}}</p>
-    <p>helloMsg: {{helloMsg}}</p>
-    <p>computed msg: {{computedMsg}}</p>
+    <p>prop: {{ propMessage }}</p>
+    <p>msg: {{ msg }}</p>
+    <p>helloMsg: {{ helloMsg }}</p>
+    <p>computed msg: {{ computedMsg }}</p>
+    <Hello ref="helloComponent" />
+    <World />
     <button @click="greet">Greet</button>
   </div>
 </template>
@@ -12,15 +14,24 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from '../lib/index'
+import Hello from './Hello.vue'
+import World from './World'
 
-@Component({
+// We declare the props separately
+// to make props types inferable.
+const AppProps = Vue.extend({
   props: {
     propMessage: String
   }
 })
-export default class App extends Vue {
-  propMessage: string
 
+@Component({
+  components: {
+    Hello,
+    World
+  }
+})
+export default class App extends AppProps {
   // inital data
   msg: number = 123
 
@@ -40,6 +51,12 @@ export default class App extends Vue {
   // method
   greet () {
     alert('greeting: ' + this.msg)
+    this.$refs.helloComponent.sayHello()
+  }
+
+  // dynamic component
+  $refs!: {
+    helloComponent: Hello
   }
 }
 </script>

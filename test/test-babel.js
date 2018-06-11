@@ -1,4 +1,4 @@
-import Component, { createDecorator } from '../lib'
+import Component, { createDecorator, mixins } from '../lib'
 import { expect } from 'chai'
 import * as td from 'testdouble'
 import Vue from 'vue'
@@ -71,5 +71,81 @@ describe('vue-class-component with Babel', () => {
     } finally {
       console.warn = originalWarn
     }
+  })
+
+  // #155
+  it('createDecrator: create a class decorator', () => {
+    const DataMixin = createDecorator(options => {
+      options.data = function () {
+        return {
+          test: 'foo'
+        }
+      }
+    })
+
+    @Component
+    @DataMixin
+    class MyComp extends Vue {}
+
+    const vm = new MyComp()
+    expect(vm.test).to.equal('foo')
+  })
+
+  it('should not throw if property decorator declare some methods', () => {
+    const Test = createDecorator((options, key) => {
+      if (!options.methods) {
+        options.methods = {}
+      }
+      options.methods[key] = () => 'test'
+    })
+
+    @Component
+    class MyComp extends Vue {
+      @Test test
+    }
+
+    const vm = new MyComp()
+    expect(vm.test()).to.equal('test')
+  })
+
+  it('should forward static members', () => {
+    @Component
+    class MyComp extends Vue {
+      static foo = 'foo'
+
+      static bar () {
+        return 'bar'
+      }
+    }
+
+    expect(MyComp.foo).to.equal('foo')
+    expect(MyComp.bar()).to.equal('bar')
+  })
+
+  it('mixin helper', function () {
+    @Component
+    class MixinA extends Vue {
+      valueA = 'hello'
+    }
+
+    @Component
+    class MixinB extends Vue {
+      valueB = 123
+    }
+
+    @Component
+    class MyComp extends mixins(MixinA, MixinB) {
+      test () {
+        this.valueA = 'hi'
+        this.valueB = 456
+      }
+    }
+
+    const vm = new MyComp()
+    expect(vm.valueA).to.equal('hello')
+    expect(vm.valueB).to.equal(123)
+    vm.test()
+    expect(vm.valueA).to.equal('hi')
+    expect(vm.valueB).to.equal(456)
   })
 })

@@ -1,6 +1,7 @@
-import Component, { createDecorator } from '../lib'
+import Component, { createDecorator, mixins } from '../lib'
 import { expect } from 'chai'
-import Vue from 'vue'
+import * as td from 'testdouble'
+import Vue, { ComputedOptions } from 'vue'
 
 describe('vue-class-component', () => {
 
@@ -45,7 +46,7 @@ describe('vue-class-component', () => {
       props: ['foo']
     })
     class MyComp extends Vue {
-      foo: number
+      foo!: number
       a: string = 'hello'
       b: number = this.foo + 1
     }
@@ -96,7 +97,7 @@ describe('vue-class-component', () => {
   it('computed', () => {
     @Component
     class MyComp extends Vue {
-      a: number
+      a!: number
       data () {
         return {
           a: 1
@@ -151,7 +152,7 @@ describe('vue-class-component', () => {
       }
     })
     class MyComp extends Vue {
-      a: number
+      a!: number
       data () {
         return { a: 1 }
       }
@@ -168,7 +169,7 @@ describe('vue-class-component', () => {
   it('extending', function () {
     @Component
     class Base extends Vue {
-      a: number
+      a!: number
       data (): any {
         return { a: 1 }
       }
@@ -176,7 +177,7 @@ describe('vue-class-component', () => {
 
     @Component
     class A extends Base {
-      b: number
+      b!: number
       data (): any {
         return { b: 2 }
       }
@@ -185,6 +186,38 @@ describe('vue-class-component', () => {
     const a = new A()
     expect(a.a).to.equal(1)
     expect(a.b).to.equal(2)
+  })
+
+  // #199
+  it('should not re-execute super class decortors', function (done) {
+    const Watch = (valueKey: string) => createDecorator((options, key) => {
+      if (!options.watch) {
+        options.watch = {}
+      }
+      options.watch[valueKey] = key
+    })
+
+    const spy = td.function()
+
+    @Component
+    class Base extends Vue {
+      count = 0
+
+      @Watch('count')
+      notify () {
+        spy()
+      }
+    }
+
+    @Component
+    class A extends Base {}
+
+    const vm = new A()
+    vm.count++
+    vm.$nextTick(() => {
+      td.verify(spy(), { times: 1 })
+      done()
+    })
   })
 
   it('createDecorator', function () {
@@ -197,13 +230,13 @@ describe('vue-class-component', () => {
     const NoCache = createDecorator((options, key) => {
       // options should have computed and methods etc.
       // that specified by class property accessors and methods
-      const computedOption: Vue.ComputedOptions<Vue> = options.computed![key]
+      const computedOption = options.computed![key] as ComputedOptions<Vue>
       computedOption.cache = false
     })
 
     @Component
     class MyComp extends Vue {
-      @Prop foo: string
+      @Prop foo!: string
       @NoCache get bar (): string {
         return 'world'
       }
@@ -236,7 +269,7 @@ describe('vue-class-component', () => {
       @Component
       class Child extends Vue {
         @Value('child')
-        value: string
+        value!: string
       }
       return Child
     }
@@ -248,12 +281,92 @@ describe('vue-class-component', () => {
     })
     class Parent extends Vue {
       @Value('parent')
-      value: string
+      value!: string
     }
 
     const parent = new Parent()
     const child = new (parent as any).$options.components.Child()
     expect(parent.value).to.equal('parent')
     expect(child.value).to.equal('child')
+  })
+
+  // #155
+  it('createDecrator: create a class decorator', () => {
+    const DataMixin = createDecorator(options => {
+      options.data = function () {
+        return {
+          test: 'foo'
+        }
+      }
+    })
+
+    @Component
+    @DataMixin
+    class MyComp extends Vue {}
+
+    const vm: any = new MyComp()
+    expect(vm.test).to.equal('foo')
+  })
+
+  it('forwardStatics', function () {
+    @Component
+    class MyComp extends Vue {
+      static myValue = 52
+
+      static myFunc() {
+        return 42
+      }
+    }
+
+    expect(MyComp.myValue).to.equal(52)
+    expect(MyComp.myFunc()).to.equal(42)
+  })
+
+  it('should warn if declared static property uses a reserved name but not prevent forwarding', function () {
+    const originalWarn = console.warn
+    console.warn = td.function('warn') as any
+
+    @Component
+    class MyComp extends Vue {
+      static options = 'test'
+    }
+
+    const message = '[vue-class-component] ' +
+      'Static property name \'options\' declared on class \'MyComp\' conflicts with ' +
+      'reserved property name of Vue internal. It may cause unexpected behavior of the component. Consider renaming the property.'
+
+    expect(MyComp.options).to.equal('test')
+    try {
+      td.verify(console.warn(message))
+    } finally {
+      console.warn = originalWarn
+    }
+  })
+
+  it('mixin helper', function () {
+    @Component
+    class MixinA extends Vue {
+      valueA = 'hello'
+    }
+
+    @Component
+    class MixinB extends Vue {
+      valueB = 123
+    }
+
+    @Component
+    class MyComp extends mixins(MixinA, MixinB) {
+      test () {
+        this.valueA = 'hi'
+        this.valueB = 456
+      }
+    }
+
+    const vm = new MyComp()
+    expect(vm.valueA).to.equal('hello')
+    expect(vm.valueB).to.equal(123)
+    vm.test()
+    expect(vm.valueA).to.equal('hi')
+    expect(vm.valueB).to.equal(456)
   })
 })

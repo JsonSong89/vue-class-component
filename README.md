@@ -8,7 +8,9 @@
 
 **Required**: [ECMAScript stage 1 decorators](https://github.com/wycats/javascript-decorators/blob/master/README.md).
 If you use Babel, [babel-plugin-transform-decorators-legacy](https://github.com/loganfsmyth/babel-plugin-transform-decorators-legacy) is needed.
-If you use TypeScript, enable `--experimentalDecorators` and `--allowSyntheticDefaultImports` flag.
+If you use TypeScript, enable `--experimentalDecorators` flag.
+
+> It does not support the stage 2 decorators yet since mainstream transpilers still transpile to the old decorators.
 
 Note:
 
@@ -74,6 +76,40 @@ export default class App extends Vue {
 
 You may also want to check out the `@prop` and `@watch` decorators provided by [vue-property-decorators](https://github.com/kaorun343/vue-property-decorator).
 
+### Using Mixins
+
+vue-class-component provides `mixins` helper function to use [mixins](https://vuejs.org/v2/guide/mixins.html) in class style manner. By using `mixins` helper, TypeScript can infer mixin types and inherit them on the component type.
+
+Example of declaring a mixin:
+
+``` js
+// mixin.js
+import Vue from 'vue'
+import Component from 'vue-class-component'
+
+// You can declare a mixin as the same style as components.
+@Component
+export class MyMixin extends Vue {
+  mixinValue = 'Hello'
+}
+```
+
+Example of using a mixin:
+
+``` js
+import Component, { mixins } from 'vue-class-component'
+import MyMixin from './mixin.js'
+
+// Use `mixins` helper function instead of `Vue`.
+// `mixins` can receive any number of arguments.
+@Component
+export class MyComp extends mixins(MyMixin) {
+  created () {
+    console.log(this.mixinValue) // -> Hello
+  }
+}
+```
+
 ### Create Custom Decorators
 
 You can extend the functionality of this library by creating your own decorators. vue-class-component provides `createDecorator` helper to create custom decorators. `createDecorator` expects a callback function as the 1st argument and the callback will receive following arguments:
@@ -116,10 +152,11 @@ If you use some Vue plugins like Vue Router, you may want class components to re
 // class-component-hooks.js
 import Component from 'vue-class-component'
 
-// Register the router hooks with thier names
+// Register the router hooks with their names
 Component.registerHooks([
   'beforeRouteEnter',
-  'beforeRouteLeave'
+  'beforeRouteLeave',
+  'beforeRouteUpdate' // for vue-router 2.2+
 ])
 ```
 
@@ -223,6 +260,10 @@ class MyComp extends Vue {
 ``` bash
 $ npm install && npm run example
 ```
+
+### Questions
+
+For questions and support please use the [the official forum](http://forum.vuejs.org) or [community chat](https://chat.vuejs.org/). The issue list of this repo is **exclusively** for bug reports and feature requests.
 
 ### License
 
